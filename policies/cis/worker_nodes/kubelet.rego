@@ -330,7 +330,7 @@ _get_arg_value(name) := value if {
 
 # Helper to get config value as string for display.
 # Tries the config file field first, then the CLI argument.
-_get_config_value_str(config_field, arg_name) := sprintf("%v", [input.kubelet_config[config_field]]) if {
+_get_config_value_str(config_field, _arg_name) := sprintf("%v", [input.kubelet_config[config_field]]) if {
 	helpers.has_key(input.kubelet_config, config_field)
 }
 

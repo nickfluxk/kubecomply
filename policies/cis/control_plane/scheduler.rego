@@ -147,7 +147,7 @@ _get_arg_value(name) := value if {
 	value := substring(arg, count(prefix), -1)
 }
 
-_get_arg_value_or_default(name, default_val) := value if {
+_get_arg_value_or_default(name, _default_val) := value if {
 	value := _get_arg_value(name)
 }
 
