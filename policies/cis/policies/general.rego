@@ -13,7 +13,6 @@ package cis.policies.general
 import rego.v1
 
 import data.lib.helpers
-import data.lib.kubernetes
 
 # ============================================================
 # KC-CIS-5.7.1: Create administrative boundaries between resources using namespaces
