@@ -1,0 +1,25 @@
+apiVersion: v2
+name: kubecomply
+description: Kubernetes SOC 2 Compliance Scanner — CIS Benchmark, RBAC Analysis, Pod Security Standards
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://kubecomply.io
+sources:
+  - https://github.com/kubecomply/kubecomply
+maintainers:
+  - name: KubeComply
+    email: hello@kubecomply.io
+    url: https://kubecomply.io
+keywords:
+  - kubernetes
+  - compliance
+  - soc2
+  - cis-benchmark
+  - rbac
+  - security
+  - opa
+  - policy
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/category: security

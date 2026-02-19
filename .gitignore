@@ -1,0 +1,65 @@
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go
+agent/bin/
+agent/vendor/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+platform/frontend/dist/
+platform/frontend/.vite/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+docker-compose.override.yml
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+.pytest_cache/
+
+# Alembic
+platform/db/migrations/versions/__pycache__/
+
+# Evidence artifacts (local dev)
+evidence-output/
+*.pdf
+
+# Helm
+charts/kubecomply/charts/
+
+# Misc
+*.log
+tmp/

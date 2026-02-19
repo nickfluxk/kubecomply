@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kubecomply.fullname" . }}
+  labels:
+    {{- include "kubecomply.labels" . | nindent 4 }}
+data:
+  SCAN_TYPE: {{ .Values.scanner.scanType | quote }}
+  SCAN_SCHEDULE: {{ .Values.scanner.schedule | quote }}
+  SEVERITY_THRESHOLD: {{ .Values.scanner.severityThreshold | quote }}
+  {{- if .Values.scanner.namespaces }}
+  SCAN_NAMESPACES: {{ join "," .Values.scanner.namespaces | quote }}
+  {{- end }}
+  DASHBOARD_ENABLED: {{ .Values.dashboard.enabled | quote }}
+  DASHBOARD_PORT: {{ .Values.dashboard.port | quote }}
+  METRICS_ENABLED: {{ .Values.metrics.enabled | quote }}
+  METRICS_PORT: {{ .Values.metrics.port | quote }}
+  LOG_LEVEL: {{ .Values.logLevel | quote }}
+  LOG_FORMAT: {{ .Values.logFormat | quote }}
+  KUBE_API_QPS: {{ .Values.kubeApiQps | quote }}
+  KUBE_API_BURST: {{ .Values.kubeApiBurst | quote }}
+  {{- if .Values.professional.enabled }}
+  SAAS_ENABLED: "true"
+  SAAS_ENDPOINT: {{ .Values.professional.endpoint | quote }}
+  {{- end }}

@@ -1,0 +1,20 @@
+apiVersion: compliance.kubecomply.io/v1alpha1
+kind: ComplianceScan
+metadata:
+  name: full-scan
+  namespace: kubecomply
+spec:
+  scanType: full
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  frameworks:
+    - cis-1.9
+  scanConfig:
+    concurrency: 5
+    timeout: 30m
+    includeNamespaces: []  # All namespaces
+    excludeNamespaces:
+      - kube-system
+      - kube-public
+  reporting:
+    format: json
+    retention: 90

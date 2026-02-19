@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubecomply.fullname" . }}
+  labels:
+    {{- include "kubecomply.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    {{- if .Values.dashboard.enabled }}
+    - port: {{ .Values.dashboard.port }}
+      targetPort: dashboard
+      protocol: TCP
+      name: dashboard
+    {{- end }}
+    {{- if .Values.metrics.enabled }}
+    - port: {{ .Values.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "kubecomply.selectorLabels" . | nindent 4 }}

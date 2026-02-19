@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KubeComply Dashboard</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #1e293b;
+      --border: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --critical: #dc2626;
+      --info: #06b6d4;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge.connected {
+      background: rgba(34, 197, 94, 0.1);
+      color: var(--success);
+    }
+
+    .status-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .stat-card .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .stat-card .sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .score-section {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .score-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .score-gauge {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-svg {
+      width: 180px;
+      height: 180px;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 12;
+    }
+
+    .gauge-fill {
+      fill: none;
+      stroke-width: 12;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s ease-in-out, stroke 0.5s ease;
+    }
+
+    .gauge-text {
+      text-anchor: middle;
+      dominant-baseline: central;
+      font-size: 36px;
+      font-weight: 700;
+      fill: var(--text-primary);
+      transform: rotate(90deg);
+      transform-origin: center;
+    }
+
+    .gauge-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 12px;
+    }
+
+    .severity-breakdown {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .severity-breakdown h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .severity-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .severity-row:last-child {
+      border-bottom: none;
+    }
+
+    .severity-row .sev-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .severity-row .sev-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .severity-row .sev-count {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .sev-critical { color: var(--critical); }
+    .sev-high { color: var(--danger); }
+    .sev-medium { color: var(--warning); }
+    .sev-low { color: var(--info); }
+    .sev-info { color: var(--text-secondary); }
+
+    .findings-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .findings-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .findings-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .findings-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .findings-table th {
+      text-align: left;
+      padding: 10px 20px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .findings-table td {
+      padding: 12px 20px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .findings-table tr:hover td {
+      background: rgba(59, 130, 246, 0.04);
+    }
+
+    .severity-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .severity-tag.critical { background: rgba(220, 38, 38, 0.15); color: var(--critical); }
+    .severity-tag.high { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .severity-tag.medium { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    .severity-tag.low { background: rgba(6, 182, 212, 0.15); color: var(--info); }
+    .severity-tag.info { background: rgba(148, 163, 184, 0.1); color: var(--text-secondary); }
+
+    .status-tag {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-tag.PASS { color: var(--success); }
+    .status-tag.FAIL { color: var(--danger); }
+    .status-tag.WARNING { color: var(--warning); }
+
+    .empty-state {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state h4 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+
+    .refresh-info {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>KubeComply Dashboard</h1>
+  <div class="header-meta">
+    <span id="cluster-name"></span>
+    <span id="agent-version"></span>
+    <span class="status-badge connected"><span class="dot"></span> Connected</span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    Loading scan results...
+  </div>
+
+  <div id="dashboard-content" style="display: none;">
+    <!-- Summary Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Total Checks</div>
+        <div class="value" id="total-checks">--</div>
+        <div class="sub" id="scan-type"></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Passed</div>
+        <div class="value" style="color: var(--success);" id="passed-checks">--</div>
+        <div class="sub" id="pass-rate"></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Failed</div>
+        <div class="value" style="color: var(--danger);" id="failed-checks">--</div>
+        <div class="sub" id="fail-rate"></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Last Scan</div>
+        <div class="value" id="last-scan-time" style="font-size: 18px;">--</div>
+        <div class="sub" id="scan-duration"></div>
+      </div>
+    </div>
+
+    <!-- Score Gauge + Severity Breakdown -->
+    <div class="score-section">
+      <div class="score-gauge">
+        <svg class="gauge-svg" viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+          <circle class="gauge-fill" id="gauge-circle" cx="60" cy="60" r="50"
+                  stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+          <text class="gauge-text" x="60" y="60" id="gauge-value">--</text>
+        </svg>
+        <div class="gauge-label">Compliance Score</div>
+      </div>
+
+      <div class="severity-breakdown">
+        <h3>Findings by Severity</h3>
+        <div class="severity-row">
+          <span class="sev-label sev-critical">
+            <span class="sev-dot" style="background: var(--critical);"></span>
+            Critical
+          </span>
+          <span class="sev-count sev-critical" id="sev-critical">0</span>
+        </div>
+        <div class="severity-row">
+          <span class="sev-label sev-high">
+            <span class="sev-dot" style="background: var(--danger);"></span>
+            High
+          </span>
+          <span class="sev-count sev-high" id="sev-high">0</span>
+        </div>
+        <div class="severity-row">
+          <span class="sev-label sev-medium">
+            <span class="sev-dot" style="background: var(--warning);"></span>
+            Medium
+          </span>
+          <span class="sev-count sev-medium" id="sev-medium">0</span>
+        </div>
+        <div class="severity-row">
+          <span class="sev-label sev-low">
+            <span class="sev-dot" style="background: var(--info);"></span>
+            Low
+          </span>
+          <span class="sev-count sev-low" id="sev-low">0</span>
+        </div>
+        <div class="severity-row">
+          <span class="sev-label sev-info">
+            <span class="sev-dot" style="background: var(--text-secondary);"></span>
+            Info
+          </span>
+          <span class="sev-count sev-info" id="sev-info">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Findings Table -->
+    <div class="findings-section">
+      <div class="findings-header">
+        <h3>Findings</h3>
+        <div class="filter-group">
+          <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+          <button class="filter-btn" data-filter="FAIL" onclick="setFilter('FAIL')">Failed</button>
+          <button class="filter-btn" data-filter="WARNING" onclick="setFilter('WARNING')">Warnings</button>
+          <button class="filter-btn" data-filter="PASS" onclick="setFilter('PASS')">Passed</button>
+        </div>
+      </div>
+      <table class="findings-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Category</th>
+            <th>Resource</th>
+          </tr>
+        </thead>
+        <tbody id="findings-body">
+        </tbody>
+      </table>
+      <div id="empty-findings" class="empty-state" style="display: none;">
+        <h4>No findings to display</h4>
+        <p>Run a compliance scan to see results here.</p>
+      </div>
+    </div>
+
+    <div class="refresh-info">
+      Auto-refreshes every 30 seconds &middot; Last updated: <span id="last-updated">--</span>
+    </div>
+  </div>
+
+  <div id="no-scan" class="empty-state" style="display: none;">
+    <h4>No Scan Results Available</h4>
+    <p>Waiting for the first compliance scan to complete. This page will auto-refresh.</p>
+  </div>
+</div>
+
+<script>
+  (function () {
+    'use strict';
+
+    var REFRESH_INTERVAL = 30000;
+    var currentFilter = 'all';
+    var allFindings = [];
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function formatTime(isoString) {
+      if (!isoString) return '--';
+      var d = new Date(isoString);
+      return d.toLocaleString();
+    }
+
+    function formatDuration(seconds) {
+      if (!seconds || seconds <= 0) return '--';
+      if (seconds < 60) return Math.round(seconds) + 's';
+      var m = Math.floor(seconds / 60);
+      var s = Math.round(seconds % 60);
+      return m + 'm ' + s + 's';
+    }
+
+    function getScoreColor(score) {
+      if (score >= 90) return 'var(--success)';
+      if (score >= 70) return 'var(--warning)';
+      return 'var(--danger)';
+    }
+
+    function setGauge(score) {
+      var circle = $('gauge-circle');
+      var circumference = 314.16;
+      var offset = circumference - (score / 100) * circumference;
+      circle.style.strokeDashoffset = offset;
+      circle.style.stroke = getScoreColor(score);
+      $('gauge-value').textContent = Math.round(score) + '%';
+    }
+
+    function renderFindings(findings) {
+      var tbody = $('findings-body');
+      var filtered = findings;
+
+      if (currentFilter !== 'all') {
+        filtered = findings.filter(function (f) {
+          return f.status === currentFilter;
+        });
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        $('empty-findings').style.display = 'block';
+        return;
+      }
+
+      $('empty-findings').style.display = 'none';
+
+      var html = '';
+      for (var i = 0; i < filtered.length; i++) {
+        var f = filtered[i];
+        html += '<tr>'
+          + '<td><strong>' + escapeHtml(f.id) + '</strong></td>'
+          + '<td>' + escapeHtml(f.title) + '</td>'
+          + '<td><span class="severity-tag ' + f.severity + '">' + f.severity + '</span></td>'
+          + '<td><span class="status-tag ' + f.status + '">' + f.status + '</span></td>'
+          + '<td>' + escapeHtml(f.category || '--') + '</td>'
+          + '<td>' + escapeHtml(f.resource || '--') + '</td>'
+          + '</tr>';
+      }
+      tbody.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
+    window.setFilter = function (filter) {
+      currentFilter = filter;
+      var btns = document.querySelectorAll('.filter-btn');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle('active', btns[i].getAttribute('data-filter') === filter);
+      }
+      renderFindings(allFindings);
+    };
+
+    function updateDashboard(data) {
+      $('loading').style.display = 'none';
+
+      if (!data.scanResult) {
+        $('dashboard-content').style.display = 'none';
+        $('no-scan').style.display = 'block';
+        return;
+      }
+
+      $('no-scan').style.display = 'none';
+      $('dashboard-content').style.display = 'block';
+
+      var result = data.scanResult;
+      var summary = result.summary;
+
+      // Header meta
+      $('cluster-name').textContent = data.clusterName ? 'Cluster: ' + data.clusterName : '';
+      $('agent-version').textContent = data.agentVersion ? 'Agent v' + data.agentVersion : '';
+
+      // Stats cards
+      $('total-checks').textContent = summary.totalChecks;
+      $('scan-type').textContent = 'Scan type: ' + result.scanType;
+      $('passed-checks').textContent = summary.passedChecks;
+      $('failed-checks').textContent = summary.failedChecks;
+
+      var total = summary.passedChecks + summary.failedChecks;
+      if (total > 0) {
+        $('pass-rate').textContent = Math.round((summary.passedChecks / total) * 100) + '% pass rate';
+        $('fail-rate').textContent = Math.round((summary.failedChecks / total) * 100) + '% fail rate';
+      }
+
+      $('last-scan-time').textContent = formatTime(result.endTime);
+
+      var durationMs = new Date(result.endTime) - new Date(result.startTime);
+      $('scan-duration').textContent = 'Duration: ' + formatDuration(durationMs / 1000);
+
+      // Compliance score gauge
+      setGauge(summary.score);
+
+      // Severity breakdown
+      var sev = summary.findingsBySeverity || {};
+      $('sev-critical').textContent = sev.critical || 0;
+      $('sev-high').textContent = sev.high || 0;
+      $('sev-medium').textContent = sev.medium || 0;
+      $('sev-low').textContent = sev.low || 0;
+      $('sev-info').textContent = sev.info || 0;
+
+      // Findings table
+      allFindings = result.findings || [];
+      renderFindings(allFindings);
+
+      // Last updated
+      $('last-updated').textContent = new Date().toLocaleTimeString();
+    }
+
+    function fetchData() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/v1/scans/latest', true);
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              var data = JSON.parse(xhr.responseText);
+              updateDashboard(data);
+            } catch (e) {
+              console.error('Failed to parse scan data:', e);
+            }
+          } else {
+            console.error('Failed to fetch scan data, status:', xhr.status);
+          }
+        }
+      };
+      xhr.send();
+    }
+
+    // Initial fetch
+    fetchData();
+
+    // Auto-refresh every 30 seconds
+    setInterval(fetchData, REFRESH_INTERVAL);
+  })();
+</script>
+
+</body>
+</html>

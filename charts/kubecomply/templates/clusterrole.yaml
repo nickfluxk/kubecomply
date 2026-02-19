@@ -1,0 +1,45 @@
+{{- if .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kubecomply.fullname" . }}
+  labels:
+    {{- include "kubecomply.labels" . | nindent 4 }}
+rules:
+  # Core resources — read-only
+  - apiGroups: [""]
+    resources: ["pods", "services", "namespaces", "nodes", "serviceaccounts", "configmaps"]
+    verbs: ["get", "list", "watch"]
+  # Secrets — metadata only (agent never reads .data)
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+  # RBAC — read-only
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+    verbs: ["get", "list", "watch"]
+  # Networking — read-only
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["networkpolicies", "ingresses"]
+    verbs: ["get", "list", "watch"]
+  # Workloads — read-only
+  - apiGroups: ["apps"]
+    resources: ["deployments", "daemonsets", "statefulsets", "replicasets"]
+    verbs: ["get", "list", "watch"]
+  # Admission — read-only
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["mutatingwebhookconfigurations", "validatingwebhookconfigurations"]
+    verbs: ["get", "list"]
+  # Policy — read-only
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
+    verbs: ["get", "list"]
+  # Autoscaling — read-only
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list"]
+  # CRDs — manage ComplianceScan and CompliancePolicy resources
+  - apiGroups: ["compliance.kubecomply.io"]
+    resources: ["compliancescans", "compliancescans/status", "compliancepolicies", "compliancepolicies/status"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+{{- end }}

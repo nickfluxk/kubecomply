@@ -1,0 +1,97 @@
+# KubeComply Helm Chart Values
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/kubecomply/kubecomply
+  pullPolicy: IfNotPresent
+  tag: ""  # Overrides the chart appVersion
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Scanner configuration
+scanner:
+  # Scan type: cis, rbac, network, pss, full
+  scanType: full
+  # Schedule for recurring scans (cron format). Empty = scan once on install.
+  schedule: ""
+  # Severity threshold for findings
+  severityThreshold: info
+  # Namespaces to scan (empty = all)
+  namespaces: []
+  # Custom policy paths (ConfigMap references)
+  customPolicies: []
+
+# RBAC — read-only access to cluster resources
+rbac:
+  create: true
+
+# KubeComply Professional SaaS integration
+professional:
+  enabled: false
+  # License key for KubeComply Professional
+  licenseKey: ""
+  # Or reference a secret containing the license key
+  licenseKeySecret:
+    name: ""
+    key: "license-key"
+  # SaaS API endpoint
+  endpoint: "https://api.kubecomply.io"
+
+# Self-hosted dashboard
+dashboard:
+  enabled: true
+  port: 8080
+
+# Prometheus metrics
+metrics:
+  enabled: true
+  port: 9090
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    namespace: ""
+    labels: {}
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 384Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
+
+# Pod configuration
+podAnnotations: {}
+podLabels: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  fsGroup: 65534
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Kubernetes API rate limiting
+kubeApiQps: 20
+kubeApiBurst: 30
+
+# Logging
+logLevel: info
+logFormat: json
