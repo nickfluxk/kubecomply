@@ -6,7 +6,7 @@ version: 0.1.0
 appVersion: "0.1.0"
 home: https://kubecomply.io
 sources:
-  - https://github.com/kubecomply/kubecomply
+  - https://github.com/nickfluxk/kubecomply
 maintainers:
   - name: KubeComply
     email: hello@kubecomply.io

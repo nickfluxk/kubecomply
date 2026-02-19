@@ -39,7 +39,7 @@ KubeComply is licensed under Apache 2.0. No CLA is required. By contributing, yo
 
 ```bash
 # Clone the repo
-git clone https://github.com/kubecomply/kubecomply.git
+git clone https://github.com/nickfluxk/kubecomply.git
 cd kubecomply
 
 # Build the agent

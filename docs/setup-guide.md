@@ -389,7 +389,7 @@ The fastest path to running KubeComply locally with all services:
 
 ```bash
 # Clone the repo
-git clone https://github.com/kubecomply/kubecomply.git
+git clone https://github.com/nickfluxk/kubecomply.git
 cd kubecomply
 
 # Start everything (API, Worker, Frontend, PostgreSQL, Redis, MinIO)
@@ -412,7 +412,7 @@ docker compose -f deploy/docker-compose.yml ps
 
 ```bash
 # Clone and build the CLI
-git clone https://github.com/kubecomply/kubecomply.git
+git clone https://github.com/nickfluxk/kubecomply.git
 cd kubecomply
 make cli
 
@@ -433,9 +433,8 @@ make cli
 ### Option C: Helm Chart (Into a Kubernetes Cluster)
 
 ```bash
-helm repo add kubecomply https://kubecomply.github.io/charts
-helm repo update
-helm install kubecomply kubecomply/kubecomply
+# From the cloned repo directory
+helm install kubecomply charts/kubecomply
 
 # Check status
 kubectl get compliancescans -A
@@ -1036,20 +1035,21 @@ Three named volumes store persistent data:
 
 ## 11. Kubernetes Deployment with Helm Chart
 
-### Install from Repository
+### Install from Cloned Repository
 
 ```bash
-helm repo add kubecomply https://kubecomply.github.io/charts
-helm repo update
+# Clone the repo
+git clone https://github.com/nickfluxk/kubecomply.git
+cd kubecomply
 
 # Install with default values (OSS mode)
-helm install kubecomply kubecomply/kubecomply
+helm install kubecomply charts/kubecomply
 
 # Install with custom values
-helm install kubecomply kubecomply/kubecomply -f values.yaml
+helm install kubecomply charts/kubecomply -f values.yaml
 
 # Install in a specific namespace
-helm install kubecomply kubecomply/kubecomply -n kubecomply --create-namespace
+helm install kubecomply charts/kubecomply -n kubecomply --create-namespace
 ```
 
 ### Install from Local Chart
@@ -1076,7 +1076,7 @@ helm install kubecomply charts/kubecomply \
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `replicaCount` | `1` | Number of agent pods |
-| `image.repository` | `ghcr.io/kubecomply/kubecomply` | Container image |
+| `image.repository` | `ghcr.io/nickfluxk/kubecomply` | Container image |
 | `image.tag` | `""` (uses appVersion) | Image tag |
 | `image.pullPolicy` | `IfNotPresent` | Pull policy |
 | `scanner.scanType` | `full` | Scan type: `cis`, `rbac`, `network`, `pss`, `full` |
@@ -1106,10 +1106,10 @@ helm install kubecomply charts/kubecomply \
 
 ```bash
 # Using Helm values file
-helm install kubecomply kubecomply/kubecomply -f examples/values-professional.yaml
+helm install kubecomply charts/kubecomply -f examples/values-professional.yaml
 
 # Using --set flags
-helm install kubecomply kubecomply/kubecomply \
+helm install kubecomply charts/kubecomply \
   --set professional.enabled=true \
   --set professional.licenseKey="YOUR-LICENSE-KEY"
 
@@ -1117,7 +1117,7 @@ helm install kubecomply kubecomply/kubecomply \
 kubectl create secret generic kubecomply-license \
   --from-literal=license-key=YOUR-LICENSE-KEY
 
-helm install kubecomply kubecomply/kubecomply \
+helm install kubecomply charts/kubecomply \
   --set professional.enabled=true \
   --set professional.licenseKeySecret.name=kubecomply-license \
   --set professional.licenseKeySecret.key=license-key
@@ -1127,7 +1127,7 @@ helm install kubecomply kubecomply/kubecomply \
 
 ```bash
 # Upgrade
-helm upgrade kubecomply kubecomply/kubecomply -f values.yaml
+helm upgrade kubecomply charts/kubecomply -f values.yaml
 
 # Uninstall (CRDs are NOT removed by default)
 helm uninstall kubecomply
@@ -1602,7 +1602,7 @@ docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.prod.yml up
 ### Kubernetes (Helm) Production
 
 ```bash
-helm install kubecomply kubecomply/kubecomply \
+helm install kubecomply charts/kubecomply \
   --namespace kubecomply \
   --create-namespace \
   --set scanner.scanType=full \
@@ -1804,7 +1804,7 @@ kubectl logs -l app.kubernetes.io/name=kubecomply -n kubecomply
 kubectl describe pod -l app.kubernetes.io/name=kubecomply -n kubecomply
 
 # Common issue: OOM — increase memory limit
-helm upgrade kubecomply kubecomply/kubecomply --set resources.limits.memory=512Mi
+helm upgrade kubecomply charts/kubecomply --set resources.limits.memory=512Mi
 ```
 
 ---
@@ -1882,7 +1882,7 @@ A:
 3. Copy the `policies/` directory for OPA policy evaluation
 4. Run: `kubecomply scan --policy-path ./policies --format table`
 
-For the container image, push `ghcr.io/kubecomply/kubecomply:<version>` to your private registry.
+For the container image, push `ghcr.io/nickfluxk/kubecomply:<version>` to your private registry.
 
 ---
 
@@ -1893,7 +1893,7 @@ For the container image, push `ghcr.io/kubecomply/kubecomply:<version>` to your 
 A: Follow these steps:
 ```bash
 # 1. Clone
-git clone https://github.com/kubecomply/kubecomply.git && cd kubecomply
+git clone https://github.com/nickfluxk/kubecomply.git && cd kubecomply
 
 # 2. Start infrastructure (PostgreSQL, Redis, MinIO)
 docker compose -f deploy/docker-compose.yml up -d postgres redis minio createbuckets
@@ -1994,7 +1994,7 @@ A:
 kubecomply scan --namespace production
 
 # Helm
-helm install kubecomply kubecomply/kubecomply --set scanner.namespaces={production,staging}
+helm install kubecomply charts/kubecomply --set scanner.namespaces={production,staging}
 
 # ComplianceScan CR
 spec:
@@ -2043,7 +2043,7 @@ For IAM roles (ECS/EKS), leave `S3_ACCESS_KEY` and `S3_SECRET_KEY` empty — bot
 
 A: Metrics are enabled by default on the agent. For ServiceMonitor:
 ```bash
-helm install kubecomply kubecomply/kubecomply \
+helm install kubecomply charts/kubecomply \
   --set metrics.enabled=true \
   --set metrics.serviceMonitor.enabled=true \
   --set metrics.serviceMonitor.interval=30s
@@ -2094,7 +2094,7 @@ A: Most likely:
 
 A: Increase the memory limit:
 ```bash
-helm upgrade kubecomply kubecomply/kubecomply --set resources.limits.memory=512Mi
+helm upgrade kubecomply charts/kubecomply --set resources.limits.memory=512Mi
 ```
 Large clusters (500+ pods) may need 384-512Mi.
 
@@ -2156,7 +2156,7 @@ A: Scan time scales with cluster size. Optimizations:
 
 A: Yes, but use leader election to avoid duplicate scans:
 ```bash
-helm install kubecomply kubecomply/kubecomply \
+helm install kubecomply charts/kubecomply \
   --set replicaCount=2
 ```
 The operator uses leader election (via `--leader-elect`) to ensure only one active controller.

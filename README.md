@@ -3,7 +3,7 @@
 **Kubernetes compliance scanner** for CIS Benchmark v1.9, RBAC security analysis, Pod Security Standards, and NetworkPolicy coverage — with remediation YAML patches. Open-source alternative to kube-bench and Kubescape. Free forever.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kubecomply/kubecomply)](https://goreportcard.com/report/github.com/kubecomply/kubecomply)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nickfluxk/kubecomply)](https://goreportcard.com/report/github.com/nickfluxk/kubecomply)
 [![CIS Benchmark](https://img.shields.io/badge/CIS%20Benchmark-v1.9-green.svg)]()
 
 ## What is KubeComply?
@@ -24,31 +24,36 @@ KubeComply is a Kubernetes-native compliance scanner that runs CIS Benchmark v1.
 ### Install via Helm
 
 ```bash
-helm repo add kubecomply https://kubecomply.github.io/charts
-helm repo update
-helm install kubecomply kubecomply/kubecomply
+# Clone the repo
+git clone https://github.com/nickfluxk/kubecomply.git
+cd kubecomply
+
+# Install from local chart
+helm install kubecomply charts/kubecomply
 ```
 
 ### Run a Scan via CLI
 
 ```bash
-# Install CLI
-brew install kubecomply/tap/kubecomply
+# Build CLI from source
+git clone https://github.com/nickfluxk/kubecomply.git
+cd kubecomply
+make cli
 
 # Run a full CIS benchmark scan
-kubecomply scan --format table
+./agent/bin/kubecomply scan --format table
 
 # RBAC analysis
-kubecomply analyze rbac
+./agent/bin/kubecomply analyze rbac
 
 # NetworkPolicy coverage
-kubecomply analyze network
+./agent/bin/kubecomply analyze network
 
 # Export as JSON
-kubecomply scan --format json -o results.json
+./agent/bin/kubecomply scan --format json -o results.json
 
 # Export as HTML report
-kubecomply scan --format html -o report.html
+./agent/bin/kubecomply scan --format html -o report.html
 ```
 
 ### Example Output
@@ -139,11 +144,6 @@ Need SOC 2 evidence packages? KubeComply Professional turns your scan results in
 ## Documentation
 
 - [**Complete Setup Guide**](docs/setup-guide.md) — Installation, configuration, development, deployment, and FAQ
-- [Installation Guide](docs/installation.md)
-- [Configuration Reference](docs/configuration.md)
-- [Writing Custom OPA/Rego Policies](docs/custom-policies.md)
-- [RBAC Analysis Guide](docs/rbac-analysis.md)
-- [API Reference](docs/api-reference.md)
 
 ## Contributing
 
