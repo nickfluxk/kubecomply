@@ -2,9 +2,12 @@
 
 **Kubernetes compliance scanner** for CIS Benchmark v1.9, RBAC security analysis, Pod Security Standards, and NetworkPolicy coverage — with remediation YAML patches. Open-source alternative to kube-bench and Kubescape. Free forever.
 
+[![CI](https://github.com/nickfluxk/kubecomply/actions/workflows/ci.yml/badge.svg)](https://github.com/nickfluxk/kubecomply/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nickfluxk/kubecomply)](https://goreportcard.com/report/github.com/nickfluxk/kubecomply)
 [![CIS Benchmark](https://img.shields.io/badge/CIS%20Benchmark-v1.9-green.svg)]()
+[![GitHub stars](https://img.shields.io/github/stars/nickfluxk/kubecomply?style=social)](https://github.com/nickfluxk/kubecomply/stargazers)
+[![GitHub Release](https://img.shields.io/github/v/release/nickfluxk/kubecomply?include_prereleases)](https://github.com/nickfluxk/kubecomply/releases)
 
 ## What is KubeComply?
 
@@ -35,25 +38,27 @@ helm install kubecomply charts/kubecomply
 ### Run a Scan via CLI
 
 ```bash
-# Build CLI from source
-git clone https://github.com/nickfluxk/kubecomply.git
-cd kubecomply
-make cli
+# Download latest binary (Linux amd64)
+curl -Lo kubecomply https://github.com/nickfluxk/kubecomply/releases/latest/download/kubecomply-linux-amd64
+chmod +x kubecomply
+
+# Or build from source
+git clone https://github.com/nickfluxk/kubecomply.git && cd kubecomply && make cli
 
 # Run a full CIS benchmark scan
-./agent/bin/kubecomply scan --format table
+./kubecomply scan --format table
 
 # RBAC analysis
-./agent/bin/kubecomply analyze rbac
+./kubecomply analyze rbac
 
 # NetworkPolicy coverage
-./agent/bin/kubecomply analyze network
+./kubecomply analyze network
 
 # Export as JSON
-./agent/bin/kubecomply scan --format json -o results.json
+./kubecomply scan --format json -o results.json
 
 # Export as HTML report
-./agent/bin/kubecomply scan --format html -o report.html
+./kubecomply scan --format html -o report.html
 ```
 
 ### Example Output
@@ -154,6 +159,12 @@ The easiest way to contribute is to add new Rego policies — see the existing p
 ## Security
 
 KubeComply uses **read-only** Kubernetes API access. See [SECURITY.md](SECURITY.md) for our security model and responsible disclosure policy.
+
+## Star History
+
+If you find KubeComply useful, give it a star — it helps others discover the project.
+
+[![Star History Chart](https://api.star-history.com/svg?repos=nickfluxk/kubecomply&type=Date)](https://star-history.com/#nickfluxk/kubecomply&Date)
 
 ## License
 
