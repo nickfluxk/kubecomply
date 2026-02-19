@@ -9,7 +9,7 @@ sources:
   - https://github.com/nickfluxk/kubecomply
 maintainers:
   - name: KubeComply
-    email: hello@kubecomply.io
+    email: tvtchandan@gmail.com
     url: https://kubecomply.io
 keywords:
   - kubernetes

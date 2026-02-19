@@ -118,7 +118,7 @@ Need SOC 2 evidence packages? KubeComply Professional turns your scan results in
 | Slack / PagerDuty Alerting | - | Yes |
 | 2-Year Evidence History | - | Yes |
 
-[Learn more about Professional →](https://kubecomply.io/professional)
+[Contact for Professional → tvtchandan@gmail.com](mailto:tvtchandan@gmail.com)
 
 ## Architecture
 

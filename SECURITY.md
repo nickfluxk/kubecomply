@@ -4,7 +4,7 @@
 
 If you discover a security vulnerability in KubeComply, please report it responsibly.
 
-**Email:** security@kubecomply.io
+**Email:** tvtchandan@gmail.com
 
 **Please include:**
 - Description of the vulnerability
