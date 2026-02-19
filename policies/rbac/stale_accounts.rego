@@ -27,29 +27,29 @@ results contains helpers.result_warn_with_evidence(
 		_namespace_suffix(role),
 	]),
 	"low",
-	concat("\n", [
-		sprintf("Review and remove the orphaned %s if no longer needed:", [role.kind]),
-		"",
-		sprintf("# Check if the role is still needed:", []),
-		sprintf("kubectl describe %s %s%s", [
-			lower(role.kind),
-			role.metadata.name,
-			_kubectl_namespace_flag(role),
-		]),
-		"",
-		sprintf("# Delete if no longer needed:", []),
-		sprintf("kubectl delete %s %s%s", [
-			lower(role.kind),
-			role.metadata.name,
-			_kubectl_namespace_flag(role),
-		]),
-	]),
 	role,
 	{
 		"role_kind": role.kind,
 		"role_name": role.metadata.name,
 		"namespace": object.get(object.get(role, "metadata", {}), "namespace", ""),
 		"binding_count": "0",
+		"remediation": concat("\n", [
+			sprintf("Review and remove the orphaned %s if no longer needed:", [role.kind]),
+			"",
+			sprintf("# Check if the role is still needed:", []),
+			sprintf("kubectl describe %s %s%s", [
+				lower(role.kind),
+				role.metadata.name,
+				_kubectl_namespace_flag(role),
+			]),
+			"",
+			sprintf("# Delete if no longer needed:", []),
+			sprintf("kubectl delete %s %s%s", [
+				lower(role.kind),
+				role.metadata.name,
+				_kubectl_namespace_flag(role),
+			]),
+		]),
 	},
 ) if {
 	role := _all_non_system_roles[_]
@@ -116,26 +116,26 @@ results contains helpers.result_warn_with_evidence(
 		sa.metadata.name,
 	]),
 	"low",
-	concat("\n", [
-		"Review and remove unused service accounts:",
-		"",
-		sprintf("# Verify no workloads use this service account:", []),
-		sprintf("kubectl get pods --all-namespaces -o json | jq '.items[] | select(.spec.serviceAccountName == \"%s\" and .metadata.namespace == \"%s\")'", [
-			sa.metadata.name,
-			sa.metadata.namespace,
-		]),
-		"",
-		sprintf("# Delete if confirmed unused:", []),
-		sprintf("kubectl delete serviceaccount %s -n %s", [
-			sa.metadata.name,
-			sa.metadata.namespace,
-		]),
-	]),
 	sa,
 	{
 		"service_account": sa.metadata.name,
 		"namespace": sa.metadata.namespace,
 		"pod_count": "0",
+		"remediation": concat("\n", [
+			"Review and remove unused service accounts:",
+			"",
+			sprintf("# Verify no workloads use this service account:", []),
+			sprintf("kubectl get pods --all-namespaces -o json | jq '.items[] | select(.spec.serviceAccountName == \"%s\" and .metadata.namespace == \"%s\")'", [
+				sa.metadata.name,
+				sa.metadata.namespace,
+			]),
+			"",
+			sprintf("# Delete if confirmed unused:", []),
+			sprintf("kubectl delete serviceaccount %s -n %s", [
+				sa.metadata.name,
+				sa.metadata.namespace,
+			]),
+		]),
 	},
 ) if {
 	sa := input.service_accounts[_]

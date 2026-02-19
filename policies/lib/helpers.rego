@@ -62,12 +62,6 @@ result_warn_with_evidence(check_id, title, desc, severity, resource, evidence) :
 	{"evidence_data": evidence},
 )
 
-# result_warn_with_evidence (7-arity) includes remediation guidance.
-result_warn_with_evidence(check_id, title, desc, severity, remediation, resource, evidence) := object.union(
-	result_warn(check_id, title, desc, severity, resource),
-	{"remediation": remediation, "evidence_data": evidence},
-)
-
 # has_key checks if an object contains a given key.
 has_key(obj, key) if {
 	_ = obj[key]
